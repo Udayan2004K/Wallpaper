@@ -32,12 +32,12 @@ export const Cart = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={closeCart}>
-      <SheetContent className="w-full sm:max-w-lg bg-background border-l border-border">
+      <SheetContent className="w-full sm:max-w-lg bg-background border-l border-border flex flex-col h-full">
         <SheetHeader className="space-y-4">
           <SheetTitle className="text-xl font-semibold text-foreground">Your Order</SheetTitle>
         </SheetHeader>
 
-        <div className="mt-6 flex-1 overflow-y-auto">
+        <div className="mt-6 flex-1 overflow-y-auto max-h-[calc(100vh-200px)] no-scrollbar">
           {items.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
