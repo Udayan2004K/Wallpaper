@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { MenuItem, useCart } from '@/context/CartContext';
@@ -9,15 +9,23 @@ interface MenuItemCardProps {
 }
 
 export const MenuItemCard = ({ item }: MenuItemCardProps) => {
-  const { addItem } = useCart();
+  const { state: { items }, addItem, updateQuantity } = useCart();
 
-  const handleAddToCart = () => {
-    addItem(item);
-    // toast({
-    //   title: "Added to cart",
-    //   description: `${item.name} has been added to your cart.`,
-    //   duration: 700,
-    // });
+  const cartItem = items.find(cartItem => cartItem.id === item.id);
+  const quantity = cartItem ? cartItem.quantity : 0;
+
+  const handleIncrease = () => {
+    addItem({ ...item, quantity: 1 });
+    toast({
+      title: "Added to cart",
+      description: `${quantity + 1} x ${item.name}`,
+    });
+  };
+
+  const handleDecrease = () => {
+    if (quantity > 0) {
+      updateQuantity(item.id, quantity - 1);
+    }
   };
 
   return (
@@ -42,14 +50,26 @@ export const MenuItemCard = ({ item }: MenuItemCardProps) => {
             {item.category}
         </span>
       </CardContent>
-      <CardFooter className="absolute bottom-0 left-0 right-0 p-0">
-        <Button
-          onClick={handleAddToCart}
-          className="w-full rounded-none bg-gradient-royal hover:opacity-90 transition-opacity"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add to Cart
-        </Button>
+      <CardFooter className="absolute bottom-0 left-0 right-0 p-0 flex">
+        {quantity === 0 ? (
+          <Button
+            onClick={handleIncrease}
+            className="w-full rounded-none bg-gradient-royal hover:opacity-90 transition-opacity"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add to Cart
+          </Button>
+        ) : (
+          <div className="flex items-center w-full">
+            <Button onClick={handleDecrease} variant="outline" size="icon" className="rounded-none rounded-bl-lg border-r-0">
+              <Minus className="h-4 w-4" />
+            </Button>
+            <div className="flex-1 text-center bg-gradient-royal text-white py-2">{quantity}</div>
+            <Button onClick={handleIncrease} variant="outline" size="icon" className="rounded-none rounded-br-lg border-l-0">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </CardFooter>
     </Card>
   );
